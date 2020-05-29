@@ -54,7 +54,11 @@ namespace MergeWavHeader
                     }
 
                 }
-                if (all8Similiar)
+                i++;
+
+                if (allSame)
+                    continue;
+                else if (all8Similiar)
                 {
                     similiarCnt++;
                 }
@@ -64,7 +68,6 @@ namespace MergeWavHeader
                 }
                 Console.WriteLine($"------第{i}个16段--相似={all8Similiar}--相同={allSame}-----");
                 Console.WriteLine();
-                i++;
 
                 if (similiarCnt >= 2)
                     return true;
