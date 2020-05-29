@@ -23,8 +23,12 @@ namespace MergeWavHeader
             int secLenH = secLen * 2;
 
             int i = 0;
-            while (i < bytes.Length / secLen - 1 && i <= 3)
+            int notSimiliarCnt = 0;
+            int similiarCnt = 0;
+
+            while (i < bytes.Length / secLen - 1 && notSimiliarCnt <= 2)
             {
+
                 byte[] bsSec = bytes.Skip(i * secLen).Take(secLen).ToArray();
                 int[] bsSecH = new int[16];
                 for (int k = 0; k < 8; k++)
@@ -33,33 +37,46 @@ namespace MergeWavHeader
 
                     bsSecH[k * 2 + 1] = bsSec[k] % secLenH;
                 }
-                Console.WriteLine(string.Join(" ", bsSecH.Select(x => x.ToString("X"))));
-                bool isdouble = true;
+                Console.WriteLine(string.Join(" ", bsSecH.Take(secLen).Select(x => x.ToString("X"))));
+                Console.WriteLine(string.Join(" ", bsSecH.Skip(secLen).Take(secLen).Select(x => x.ToString("X"))));
                 bool allSame = true;
+                bool all8Similiar = true;
+
                 for (int j = 0; j < secLen; j++)
                 {
-                    Console.WriteLine(j);
+                    Console.Write(j + " ");
                     if (bsSecH[j] != bsSecH[j + secLen])
                         allSame = false;
                     if (Diff(bsSecH[j], bsSecH[j + secLen]) > 3)
                     {
-                        isdouble = false;
+                        all8Similiar = false;
                         break;
                     }
+
                 }
-                i++;
-                if (!allSame)
+                if (all8Similiar)
                 {
-                    return isdouble;
+                    similiarCnt++;
                 }
+                else
+                {
+                    notSimiliarCnt++;
+                }
+                Console.WriteLine($"------第{i}个16段--相似={all8Similiar}--相同={allSame}-----");
+                Console.WriteLine();
+                i++;
+
+                if (similiarCnt >= 2)
+                    return true;
+
             }
             return false;
         }
         static void Main(string[] args)
         {
-            if (DateTime.Now > new DateTime(2020, 5, 30))
-                return;
-            Console.WriteLine("版本2349");
+            //if (DateTime.Now > new DateTime(2020, 5, 30))
+            //    return;
+            Console.WriteLine("版本05290906");
             try
             {
                 string outDir = "已合并";
@@ -82,8 +99,9 @@ namespace MergeWavHeader
                     {
                         Console.WriteLine($"单声道");
                     }
+
                     string filename = Path.GetFileName(f);
-                    bool isDouble = IsDoubleChannel(f);
+                    //bool isDouble = IsDoubleChannel(f);
 
 
                     string outFileName = Path.Combine(outDir, filename.ToLower().Replace(".wav", extSuffix));
@@ -99,6 +117,8 @@ namespace MergeWavHeader
                         }
                         Console.WriteLine($"已生成{outFileName}");
                     }
+                    Console.WriteLine("===================================================");
+                    Console.WriteLine();
                     Console.WriteLine();
                 }
             }
