@@ -79,7 +79,7 @@ namespace MergeWavHeader
         {
             //if (DateTime.Now > new DateTime(2020, 5, 30))
             //    return;
-            Console.WriteLine("版本05290906");
+            Console.WriteLine("版本05290910");
             try
             {
                 string outDir = "已合并";
